@@ -16,7 +16,7 @@ export default function MovieCard({ movie, onOpen, onDelete }) {
       </div>
       <button
         className="btn-delete"
-        onClick={(e) => { e.stopPropagation(); onDelete(movie.id); }}
+        onClick={(e) => { e.stopPropagation(); onDelete(movie._id); }}
       >
         Șterge
       </button>
