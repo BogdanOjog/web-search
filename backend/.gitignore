@@ -1,5 +1,2 @@
 node_modules/
 .env
-movies.db
-movies.db-shm
-movies.db-wal

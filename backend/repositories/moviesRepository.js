@@ -1,41 +1,21 @@
-const db = require('../database/init');
+const Movie = require('../models/Movie');
 
 const moviesRepository = {
-
-    findAll: () => {
-        const query = db.prepare('SELECT * FROM movies');
-        return query.all();
+    findAllByUser: async (userId) => {
+        return await Movie.find({ userId }); //Afisarea filmelor pentru un utilizator
     },
-
-    findById: (id) => {
-        const query = db.prepare('SELECT * FROM movies WHERE id = ?');
-        return query.get(id);
+    findByTitleAndUser: async (title, userId) => {
+        return await Movie.findOne({ 
+            title: { $regex: new RegExp(`^${title}$`, 'i') }, //Afisare filmelor specifice
+            userId 
+        });
     },
-
-    findByTitle: (title) => {
-        const query = db.prepare('Select * FROM movies WHERE title = ?');
-        return query.get(title);
+    create: async (movieData) => {
+        const newMovie = new Movie(movieData); //adaugare film
+        return await newMovie.save();
     },
-
-    create: (movieData) => {
-        const query = db.prepare('INSERT INTO movies (title, year, genre, poster, rating, rated, runtime, director, actors, plot) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        const info = query.run(
-        movieData.title, movieData.year, movieData.genre, movieData.poster, movieData.rating,
-        movieData.rated, movieData.runtime, movieData.director, movieData.actors, movieData.plot
-        );
-        return {id: info.lastInsertRowid, ...movieData };
-    },
-
-    update: (id, movieData) => {
-        const query = db.prepare('UPDATE movies SET title = ?, year = ?, genre = ?, poster = ?, rating = ? WHERE id = ?');
-        query.run(movieData.title, movieData.year, movieData.genre, movieData.poster, movieData.rating, id);
-
-        return {id, ...movieData};
-    },
-
-    delete: (id) => {
-        const query = db.prepare('DELETE FROM movies WHERE id = ?');
-        query.run(id);
+    delete: async (id, userId) => {
+        return await Movie.findOneAndDelete({ _id: id, userId }); //stergere film
     }
 };
 
